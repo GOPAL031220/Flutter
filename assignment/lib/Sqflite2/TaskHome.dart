@@ -18,116 +18,137 @@ class _TaskhomeState extends State<Taskhome> {
   Taskmodel _taskmodel = Taskmodel();
   Repository _repository = Repository();
 
-  _showFormDialogue(BuildContext context) {
-    return showDialog(
-        context: context,
-        builder: (param) {
-          return AlertDialog(
-            actions: [
-              OutlinedButton(
-                onPressed: () async{
-                  Navigator.pop(context);
-                  _taskmodel.name = _taskNameController.text;
-                  _taskmodel.description = _taskDescriptionController.text;
-                  _taskmodel.date = _selectedDate != null
-                      ? DateFormat('yyyy-MM-dd').format(_selectedDate!)
-                      : null;
-                  _taskmodel.time = _selectedTime != null
-                      ? _selectedTime!.format(context)
-                      : null;
-                  _taskmodel.priority = _selectedPriority;
-                 _repository.insertData('Tasks', _taskmodel.TaskMap());
+  _showFormDialogue(BuildContext context, {Taskmodel? task}) {
+    if (task != null) {
+      _taskNameController.text = task.name ?? '';
+      _taskDescriptionController.text = task.description ?? '';
+      _selectedDate = task.date != null ? DateFormat('dd-MM-yyyy').parse(task.date!) : null;
+    // _selectedTime = task.time != null ? TimeOfDay.fromDateTime(DateFormat.jm().parse(task.time!)) : null;
+      _selectedPriority = task.priority;
+    }
 
-                 getAllTasks();
-                 _taskNameController.clear();
-                 _taskDescriptionController.clear();
-                 _selectedDate= null;
-                 _selectedTime= null;
-                 _selectedPriority=null;
-                },
-                child: Text('Add',style: TextStyle(color: Colors.white),),
-                style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(Colors.green)
+    return showDialog(
+      context: context,
+      builder: (param) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              actions: [
+                OutlinedButton(
+                  onPressed: () async {
+                    Navigator.pop(context);
+                    _taskmodel.name = _taskNameController.text.isNotEmpty ? _taskNameController.text : '(no title)';
+                    _taskmodel.description = _taskDescriptionController.text.isNotEmpty ? _taskDescriptionController.text : '(no description)';
+                    _taskmodel.date = _selectedDate != null
+                        ? DateFormat('dd-MM-yyyy').format(_selectedDate!)
+                        : null;
+                    _taskmodel.time = _selectedTime != null
+                        ? _selectedTime!.format(context)
+                        : null;
+                    _taskmodel.priority = _selectedPriority;
+
+                    if (task == null) {
+                      _repository.insertData('Tasks', _taskmodel.TaskMap());
+                    } else {
+                      _taskmodel.id  = task.id;
+                      _repository.updateData('Tasks',_taskmodel.TaskMap());
+                    }
+                    getAllTasks();
+                    _taskNameController.clear();
+                    _taskDescriptionController.clear();
+                    _selectedDate = null;
+                    _selectedTime = null;
+                    _selectedPriority = null;
+                  },
+                  child: Text('Add', style: TextStyle(color: Colors.white)),
+                  style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(Colors.green)),
+                ),
+                OutlinedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    _taskNameController.clear();
+                    _taskDescriptionController.clear();
+                    _selectedDate = null;
+                    _selectedTime = null;
+                    _selectedPriority = null;
+                  },
+                  child: Text('Cancel', style: TextStyle(color: Colors.white)),
+                  style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(Colors.red)),
+                ),
+              ],
+              title: Text('Task Details'),
+              content: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    TextField(
+                      controller: _taskNameController,
+                      decoration: InputDecoration(
+                        hintText: 'Enter Title',
+                      ),
+                    ),
+                    TextField(
+                      controller: _taskDescriptionController,
+                      decoration: InputDecoration(
+                        hintText: 'Enter Description',
+                      ),
+                    ),
+                    ListTile(
+                      title: Text(_selectedDate == null
+                          ? 'Select Date'
+                          : DateFormat('dd-MM-yyyy').format(_selectedDate!)),
+                      trailing: Icon(Icons.calendar_today),
+                      onTap: () async {
+                        DateTime? pickedDate = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2101),
+                        );
+                        setDialogState(() {
+                          _selectedDate = pickedDate;
+                        });
+                      },
+                    ),
+                    ListTile(
+                      title: Text(_selectedTime == null
+                          ? 'Select Time'
+                          : _selectedTime!.format(context)),
+                      trailing: Icon(Icons.access_time),
+                      onTap: () async {
+                        TimeOfDay? pickedTime = await showTimePicker(
+                          context: context,
+                          initialTime: TimeOfDay.now(),
+                        );
+                        setDialogState(() {
+                          _selectedTime = pickedTime;
+                        });
+                      },
+                    ),
+                    DropdownButtonFormField(
+                      value: _selectedPriority,
+                      items: ['Low', 'Medium', 'High'].map((priority) {
+                        return DropdownMenuItem<String>(
+                          value: priority,
+                          child: Text(priority),
+                        );
+                      }).toList(),
+                      hint: Text('Priority'),
+                      onChanged: (value) {
+                        setDialogState(() {
+                          _selectedPriority = value;
+                        });
+                      },
+                    ),
+                  ],
                 ),
               ),
-              OutlinedButton(
-                onPressed: (){
-                  Navigator.pop(context);
-                },
-                child: Text('Cancel',style: TextStyle(color: Colors.white),),
-                style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(Colors.red)
-                ),
-              ),
-            ],
-            title: Text('Task Details'),
-            content: SingleChildScrollView(
-              child: Column(
-                children: [
-                  TextField(
-                    controller: _taskNameController,
-                    decoration: InputDecoration(
-                      hintText: 'Enter Title',
-                    ),
-                  ),
-                  TextField(
-                    controller: _taskDescriptionController,
-                    decoration: InputDecoration(
-                      hintText: 'Enter Description',
-                    ),
-                  ),
-                  ListTile(
-                    title: Text(_selectedDate == null
-                        ? 'Select Date'
-                        : DateFormat('yyyy-MM-dd').format(_selectedDate!)),
-                    trailing: Icon(Icons.calendar_today),
-                    onTap: () async {
-                      DateTime? pickedDate = await showDatePicker(
-                        context: context,
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime(2000),
-                        lastDate: DateTime(2101),
-                      );
-                      setState(() {
-                        _selectedDate = pickedDate;
-                      });
-                    },
-                  ),
-                  ListTile(
-                    title: Text(_selectedTime == null
-                        ? 'Select Time'
-                        : _selectedTime!.format(context)),
-                    trailing: Icon(Icons.access_time),
-                    onTap: () async {
-                      TimeOfDay? pickedTime = await showTimePicker(
-                        context: context,
-                        initialTime: TimeOfDay.now(),
-                      );
-                      setState(() {
-                        _selectedTime = pickedTime;
-                      });
-                    },
-                  ),
-                  DropdownButtonFormField(
-                    value: _selectedPriority,
-                    items: ['Low','Medium','High'].map((priority) {
-                      return DropdownMenuItem<String>(
-                        value: priority,
-                        child: Text(priority),
-                      );
-                    }).toList(),
-                    hint: Text('Priority'),
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedPriority = value;
-                      });
-                    },
-                  ),
-                ],
-              ),
-            ),
-          );
-        });
+            );
+          },
+        );
+      },
+    );
   }
   void initState(){
     super.initState();
@@ -137,7 +158,6 @@ class _TaskhomeState extends State<Taskhome> {
   getAllTasks() async {
     _categoryList.clear();
     List categories = await _repository.readData('Tasks');
-    print(categories);
     categories.forEach((cat){
       setState(() {
         var c = Taskmodel();
@@ -234,10 +254,9 @@ class _TaskhomeState extends State<Taskhome> {
           ),
         ],
       ),
-      body: _categoryList.isEmpty
-          ? Center(child: Text('No Tasks Available'))
-          : ListView.builder(itemBuilder: (context, index) {
-        Color cardColor=Colors.white;
+      body:_categoryList.isEmpty ? Center(child: Text('No Tasks Available'),)
+        : ListView.builder(itemBuilder: (context, index) {
+        Color? cardColor;
         switch (_categoryList[index].priority) {
           case 'Low':
             cardColor = Colors.green.shade200;
@@ -264,9 +283,12 @@ class _TaskhomeState extends State<Taskhome> {
                 style: TextStyle(fontSize: 18),),
                 Row(
                   children: [
-                    Text(_categoryList[index].time.toString()),
-                    SizedBox(width: 10,),
-                    Text(_categoryList[index].date.toString()),
+                    if (_categoryList[index].time != null)
+                      Text(_categoryList[index].time.toString()),
+                    if (_categoryList[index].time != null)
+                      SizedBox(width: 10),
+                    if (_categoryList[index].date != null)
+                      Text(_categoryList[index].date.toString()),
                   ],
                 ),
               ],
@@ -274,7 +296,7 @@ class _TaskhomeState extends State<Taskhome> {
             trailing: PopupMenuButton<String>(
               onSelected: (value) {
                 if (value == 'edit') {
-               //   _editTask(context, _categoryList[index]);
+                  _showFormDialogue(context, task: _categoryList[index]);
                 }
                 else if (value == 'delete') {
                   _repository.deleteData('Tasks', _categoryList[index].id);
