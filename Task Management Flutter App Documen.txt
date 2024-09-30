@@ -1,0 +1,140 @@
+Task Management Flutter App Documentation
+
+Overview
+
+This is a simple task management application built using Flutter and SQLite for local data storage. The app allows users to create, update, delete, and view tasks. Each task includes attributes like name, description, date, time, and priority (Low, Medium, High). The tasks can be sorted by date or name.
+
+Features
+
+1. Task Creation: Users can add tasks with a title, description, date, time, and priority.
+2. Task Modification: Existing tasks can be edited.
+3. Task Deletion: Tasks can be deleted.
+4. Sorting: Tasks can be sorted by name or date (ascending or descending).
+5. Task Persistence: Tasks are stored in a local SQLite database.
+6. Task Priority: Each task is assigned a priority (Low, Medium, High) which is visually indicated by color.
+
+Project Structure
+
+The project contains the following primary components:
+
+1. TaskHome Widget:
+    - This is the main screen of the app that displays the list of tasks.
+    - Users can add, edit, or delete tasks from this screen.
+    - Provides sorting options for tasks.
+    - Displays tasks with their associated priority using colored cards.
+   
+2. Task Model (TaskModel Class):
+    - Defines the structure of a task object with fields like id, name, description, date, time, priority, and is_complete.
+    - The TaskMap() function converts the task object into a map that can be stored in the SQLite database.
+
+3. Repository Class:
+    - Handles all the SQLite database operations such as inserting, reading, updating, and deleting tasks.
+    - Uses the DatabaseConnection class to manage the database.
+
+4. DatabaseConnection Class:
+    - Manages the SQLite database connection.
+    - Responsible for creating the database and the Tasks table.
+
+TaskHome Widget
+
+Main Functionality
+
+- Task List Display: Displays a list of tasks with title, description, date, and time. Each task's priority determines its card color (Green for Low, Yellow for Medium, Red for High).
+  
+- Task Form Dialog: A form that pops up when adding or editing a task. The form contains fields for:
+    - Task title
+    - Task description
+    - Task date
+    - Task time
+    - Task priority (Low, Medium, High)
+
+_showFormDialogue(BuildContext context, {Taskmodel? task})
+
+This function opens the task form for creating or editing tasks. If a task is provided, the form is pre-filled with its data.
+
+Sorting Tasks
+
+Users can sort tasks by:
+- Date (Ascending or Descending)
+- Name (A-Z or Z-A)
+
+The sorting is controlled by the _sortTasks function which sorts _categoryList based on the selected criteria.
+
+void _sortTasks(String criteria)
+
+Task Addition and Modification
+
+Tasks can be added or modified using the dialog form. The data is processed and inserted or updated in the SQLite database through the Repository class.
+
+TaskModel Class
+
+The TaskModel class represents the task entity with the following fields:
+
+- id: Unique identifier for the task.
+- name: The name/title of the task.
+- description: Description of the task.
+- date: Date when the task is due.
+- time: Time when the task is due.
+- priority: Task priority (Low, Medium, High).
+- is_complete: A flag to track if the task is complete (default is 0).
+
+The class provides a method to convert the task object into a map:
+
+TaskMap() {
+    Map mapping = Map<String, dynamic>();
+    mapping['id'] = id;
+    mapping['name'] = name;
+    mapping['description'] = description;
+    mapping['date'] = date;
+    mapping['time'] = time;
+    mapping['priority'] = priority;
+    mapping['is_complete'] = 0;
+
+    return mapping;
+}
+
+Repository Class
+
+The Repository class handles database interactions for the task list. It uses the DatabaseConnection class to get access to the SQLite database.
+
+Main Functions:
+
+- insertData: Inserts a task into the database.
+insertData(table, data)
+  
+- readData: Fetches all tasks from the database.
+readData(table)
+
+- updateData: Updates a task in the database.
+updateData(table, data)
+
+- deleteData: Deletes a task from the database using its id.
+deleteData(table, categoryId)
+
+DatabaseConnection Class
+
+The DatabaseConnection class is responsible for initializing the SQLite database and creating the necessary tables.
+
+- setDatabase: Opens the database connection.
+setDatabase()
+
+- _onCreatingDatabase: Creates the Tasks table if it doesn’t already exist.
+_onCreatingDatabase(Database database, int version)
+
+The Tasks table is structured as follows:
+
+CREATE TABLE Tasks (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT,
+  description TEXT,
+  date DATE,
+  time TIME,
+  priority TEXT,
+  is_complete INTEGER DEFAULT 0
+);
+
+Conclusion
+
+This app provides a robust local task management system using Flutter and SQLite. The main features include adding, updating, deleting, sorting tasks, and maintaining task priorities. The local storage ensures task persistence across app sessions. The app can be expanded further by introducing features like task completion, notifications, or task categories.
+"""
+
