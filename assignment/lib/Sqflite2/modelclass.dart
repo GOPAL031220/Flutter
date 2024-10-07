@@ -19,4 +19,9 @@ class Taskmodel {
 
     return mapping;
   }
+
+  @override
+  String toString() {
+    return 'Taskmodel{id: $id, name: $name, description: $description, date: $date, time: $time, priority: $priority, is_complete: $is_complete}';
+  }
 }

@@ -24,7 +24,9 @@ class _TaskhomeState extends State<Taskhome> {
       _taskDescriptionController.text = task.description ?? '';
       _selectedDate = task.date != null ? DateFormat('dd-MM-yyyy').parse(task.date!) : null;
     // _selectedTime = task.time != null ? TimeOfDay.fromDateTime(DateFormat.jm().parse(task.time!)) : null;
+    // print('time ${_selectedTime}');
       _selectedPriority = task.priority;
+      print('task : $task');
     }
 
     return showDialog(
@@ -300,6 +302,9 @@ class _TaskhomeState extends State<Taskhome> {
                 }
                 else if (value == 'delete') {
                   _repository.deleteData('Tasks', _categoryList[index].id);
+                  setState(() {
+                    _categoryList.removeAt(index);
+                  });
                   getAllTasks();
                 }
               },
