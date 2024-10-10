@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:assignment/assessment(sqflite)/add_donor_screen.dart';
 import 'package:assignment/assessment(sqflite)/Donorlist.dart';
 import 'package:assignment/assessment(sqflite)/Request Recieved.dart';
+import 'package:assignment/assessment(sqflite)/Blood_Banks.dart';
 
 
 
@@ -19,6 +20,7 @@ class Adminscreen extends StatelessWidget {
              _buildGridItem(context, 'Add Donor', Icons.person_add, AddDonorScreen()),
              _buildGridItem(context, 'Donors List', Icons.person, Donorlist()),
              _buildGridItem(context, 'Request Received', Icons.assignment, Requestlist()),
+            _buildGridItem(context, 'Blood Banks', Icons.bloodtype, BloodBanks()),
           ],
         ),
       ),
