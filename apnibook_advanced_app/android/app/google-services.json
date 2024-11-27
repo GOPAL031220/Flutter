@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "464278579932",
+    "project_id": "apni-book",
+    "storage_bucket": "apni-book.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:464278579932:android:3db151d8133d860d39a219",
+        "android_client_info": {
+          "package_name": "com.example.apnibook_advanced_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCthttS5F9c7VEiwtEOJRJ65VMc71ADJgk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
