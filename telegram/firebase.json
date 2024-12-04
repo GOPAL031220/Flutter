@@ -1,0 +1,1 @@
+{"flutter":{"platforms":{"android":{"default":{"projectId":"telegram-173bc","appId":"1:1007134483865:android:8e895cd0ec93101d439f08","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"telegram-173bc","configurations":{"android":"1:1007134483865:android:8e895cd0ec93101d439f08","ios":"1:1007134483865:ios:a9ba98513b50b648439f08"}}}}}}
